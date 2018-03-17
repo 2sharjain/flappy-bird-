@@ -63,7 +63,7 @@ def gameStart(m):
     z = random.randrange(110,180)
     w = random.randrange(150,450)
     if a%110==0:
-        arr.append(Rectangle(canvas,x,w-z,w)) #rectangle objects stored the array
+        arr.append(Rectangle(canvas,x,w-z,w)) #rectangle objects stored in the array
         
     for i in range(len(arr)):
             arr[i].move()
