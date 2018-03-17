@@ -70,7 +70,7 @@ def gameStart(m):
             if(arr[i].isHit()):
               m=0
     if arr[j].canvas.coords(arr[0].id1)[2]<0:
-         arr.pop(j)
+         del arr[j]
          print("deleted")
          l=l+1
     canvas.bind("<Button-1>",ball.bounce)
