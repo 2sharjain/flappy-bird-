@@ -7,7 +7,6 @@ def gameOver(score):
     canvas1=Canvas(root,width = 400,height = 500,bg = "BLACK",bd = 0, highlightthickness = 0)
     canvas1.create_text(200,200,text="GAME OVER",fill="WHITE",font=("Comic San MS",50,"bold"))
     canvas1.create_text(200,250,text=("YOUR SCORE IS : "+str(score)),fill="WHITE",font=("Comic San MS",20,"bold"))
-    ball1=Ball(canvas1)
     canvas1.pack()
     root.update()
     root.mainloop()
