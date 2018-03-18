@@ -8,7 +8,7 @@ def gameOver(score):
     canvas1.create_text(200,200,text="GAME OVER",fill="WHITE",font=("Comic San MS",50,"bold"))
     canvas1.create_text(200,250,text=("YOUR SCORE IS : "+str(score)),fill="WHITE",font=("Comic San MS",20,"bold"))
     canvas1.pack()
-    root.update()
+    #root.update()
     root.mainloop()
 
     
@@ -42,18 +42,18 @@ class Rectangle:
         self.z = z
         self.canvas = canvas
         self.id1 = self.canvas.create_rectangle(self.x,0,self.x+60,self.z,fill ="WHITE")
-        self.id2 = self.canvas.create_rectangle(self.x,500,self.x+60,self.w,fill = "WHITE")
+        self.id2 = self.canvas.create_rectangle(self.x,self.w,self.x+60,500,fill = "WHITE")
         
     def move(self):
         self.canvas.move(self.id1,-2,0)
         self.canvas.move(self.id2,-2,0)
     def isHit(self):
         p=[]
-        coords1 = self.canvas.coords(self.id1)
-        coords2 = self.canvas.coords(self.id2) 
-        p = canvas.coords(ball.id)
-        if p[0]-coords1[0]<= 60 and p[0]-coords1[0]>=-60 and p[0]+30>=coords1[0]: #if it hits the rectangles
-            if p[1]+30 >= coords2[1] or p[3]-30<=coords1[3]:
+        coords1 = self.canvas.coords(self.id1)   # for the rectangle the coordinates are the end points of the diagonal  
+        coords2 = self.canvas.coords(self.id2)   
+        p = canvas.coords(ball.id) #p=[x1,y1,x2,y2]                                                                                                        y1
+        if p[0]-coords1[0]<= 60 and p[0]-coords1[0]>=-60 and p[2]>=coords1[0]: #if it hits the rectangles.    #for the oval(ball) the coordinates are as x1  x2
+            if p[1]+30 >= coords2[1] or p[1]<=coords1[3]:                                                     #                                            y2
                 ball.i=False
                 return True
 
@@ -64,22 +64,19 @@ def gameStart(m):
  a=0
  l=0
  arr=[]
- j=0
  while m:
-
-    x = random.randrange(370,400)
-    z = random.randrange(110,180)
-    w = random.randrange(250,450)
     if a%110==0:
-        arr.append(Rectangle(canvas,x,w-z,w)) #rectangle objects stored in the array
-        
-    for i in range(len(arr)):
-            arr[i].move()
-            if(arr[i].isHit()):
+        x = random.randrange(370,400)
+        z = random.randrange(110,180)
+        w = random.randrange(250,450)        
+        arr.append(Rectangle(canvas,x,w-z,w)) #new Rectangle object stored in the array
+        a=0
+    for i in arr:
+            i.move()
+            if(i.isHit()):
               m=0
-    if arr[j].canvas.coords(arr[0].id1)[2]<0:
-         arr.pop(j)
-         print("deleted")
+    if arr[0].canvas.coords(arr[0].id1)[2]<0:
+         del arr[0]
          l=l+1
     canvas.bind("<Button-1>",ball.bounce)
     ball.goDown()
@@ -87,7 +84,7 @@ def gameStart(m):
     root.update()
     a=a+1  
     time.sleep(0.01)
- return l
+ return l #returns the score i.e the number of deleted rectangles
 
 
 
@@ -97,9 +94,8 @@ root = Tk()
 root.title("ALPHA")
 root.resizable(0,0)
 canvas = Canvas(root,width = 400,height = 500,bg = "BLACK",bd = 0, highlightthickness = 0)
-canvas.pack()
-root.update()    
+canvas.pack()   
 ball = Ball(canvas)
 score=gameStart(m=1)
-time.sleep(0.3)
+time.sleep(0.25)
 gameOver(score)
