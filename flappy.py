@@ -9,7 +9,7 @@ def gameOver(score,best):
     canvas1.create_text(200,250,text=("YOUR SCORE IS : "+str(score)),fill="WHITE",font=("Comic San MS",20,"bold"))
     canvas1.create_text(200,450,text=("BEST : "+str(best)),fill="WHITE",font=("Comic San MS",15,"bold"))
     canvas1.pack()
-    #root.update()
+    root.update()
     root.mainloop()
 
     
