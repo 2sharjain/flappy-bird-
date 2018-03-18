@@ -89,7 +89,10 @@ def gameStart(m):
 
 
 with open("bestscore.txt","r") as bs:
+   try: 
     best=int(bs.readline())
+   except:
+    best=0
 root = Tk()
 root.title("ALPHA")
 root.resizable(0,0)
