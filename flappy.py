@@ -2,11 +2,12 @@ from tkinter import *
 import random
 import time
    
-def gameOver(score):
+def gameOver(score,best):
     canvas.destroy()
     canvas1=Canvas(root,width = 400,height = 500,bg = "BLACK",bd = 0, highlightthickness = 0)
     canvas1.create_text(200,200,text="GAME OVER",fill="WHITE",font=("Comic San MS",50,"bold"))
     canvas1.create_text(200,250,text=("YOUR SCORE IS : "+str(score)),fill="WHITE",font=("Comic San MS",20,"bold"))
+    canvas1.create_text(200,450,text=("BEST : "+str(best)),fill="WHITE",font=("Comic San MS",15,"bold"))
     canvas1.pack()
     #root.update()
     root.mainloop()
@@ -87,9 +88,8 @@ def gameStart(m):
  return l #returns the score i.e the number of deleted rectangles
 
 
-
-
-
+with open("bestscore.txt","r") as bs:
+    best=int(bs.readline())
 root = Tk()
 root.title("ALPHA")
 root.resizable(0,0)
@@ -98,4 +98,9 @@ canvas.pack()
 ball = Ball(canvas)
 score=gameStart(m=1)
 time.sleep(0.25)
-gameOver(score)
+if score>best:
+    best=score
+    with open("bestscore.txt","w") as bs:
+     bs.truncate()
+     bs.write(str(best))
+gameOver(score,best)
