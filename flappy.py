@@ -96,7 +96,6 @@ def gameStart(m):
 root = Tk()
 root.title("ALPHA")
 root.resizable(0,0)
-root.wm_attributes("-topmost",1)
 canvas = Canvas(root,width = 400,height = 500,bg = "BLACK",bd = 0, highlightthickness = 0)
 canvas.pack()
 root.update()    
