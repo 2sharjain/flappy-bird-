@@ -80,7 +80,6 @@ def gameStart(m):
          l=l+1
     canvas.bind("<Button-1>",ball.bounce)
     ball.goDown()
-    root.update_idletasks()
     root.update()
     a=a+1  
     time.sleep(0.01)
