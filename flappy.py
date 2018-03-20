@@ -6,7 +6,7 @@ import json
 
 def reStart():
     root.destroy()
-    os.system('python ll.py')
+    os.system('python flappy.py')
     
 def sortedDict(score,name):
  t=1
