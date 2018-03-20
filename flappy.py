@@ -3,7 +3,6 @@ import random
 import time
 import os
 import json
-global name
 
 
 def reStart():
