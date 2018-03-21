@@ -143,8 +143,8 @@ class Rectangle:
                 + 60, 500, fill='WHITE')
 
     def move(self):
-        self.canvas.move(self.id1, -2.5, 0)
-        self.canvas.move(self.id2, -2.5, 0)
+        self.canvas.move(self.id1, -2.1, 0)
+        self.canvas.move(self.id2, -2.1, 0)
 
     def isHit(self):
         p = []
