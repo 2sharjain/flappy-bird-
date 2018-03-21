@@ -52,7 +52,7 @@ class GameOver:
 
     def reStart(self):   #restarts the game
         root.destroy()
-        os.system("python ll.py")
+        os.system("python flappy.py")
 
         
     def leaderBoard(self,name):   #stores the scores and the corresponding names as a dictionary in a json file.
