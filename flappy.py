@@ -1,4 +1,4 @@
-
+#save the file as flappy.py
 
 from tkinter import *
 import random
