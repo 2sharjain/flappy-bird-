@@ -8,10 +8,10 @@ import json
 
 '''Class GameOver is the class with methods which make the game over window and the present the high scores'''
 
-class GameOver:
+class GameOver: #make the gameover window and displayes the scores.
     def __init__(self,score,canvas):
         self.score=score
-        self.leaderboards={}
+        self.leaderboards={} #dictionary containing the high scores.
         print (score)
         canvas.destroy()
         self.canvas1 = Canvas(root, width=400, height=500, bg='WHITE')
@@ -44,10 +44,10 @@ class GameOver:
         name = self.entry.get()
         y = 300
         leaders = self.sortedDict(name)
-        scores=list(leaders.keys())
-        scores=[int(i) for i in scores]
-        scores=sorted(scores,reverse=True)
-        for i in scores:
+        scores=list(leaders.keys()) #scores as strings
+        scores=[int(i) for i in scores] #scores as integers
+        scores=sorted(scores,reverse=True) #reverse sorting
+        for i in scores:                                           #displaying scores on the canvas in decreasing order
             self.canvas1.create_text(200, y, text=str(i) + ': '
                                 + str(leaders[str(i)]), fill='BLACK',
                                 font=('Comic San MS', 20, 'bold'))
@@ -61,31 +61,31 @@ class GameOver:
         os.system("python flappy.py")
 
         
-    def sortedDict(self,name):
-       t=1
+    def sortedDict(self,name):  #stores the scores and the corresponding names as a dictionary in a json file.
+       t=1                     # t represents if the score is equal to any scores the leaderboars. if t==0, score is already in the leaderboard.
        try:   
          with open('leaderboards.txt', 'r') as f:
            leaderboards = json.load(f)
        except:
-         leaderboards={"3":"name","2":"name","1":"name"}
+         leaderboards={"3":"name","2":"name","1":"name"} #the scores are the keys and the names are the values.
        scores=list(leaderboards.keys())
-       scores=[int(i) for i in scores]
+       scores=[int(i) for i in scores]  #list of scores in type int.
        for i in scores:
-         if self.score==i:
+         if self.score==i:        #checks if the score is already in the current leaderboard.
           leaderboards[str(self.score)]=name
           t=0
-       if t!=0:        
+       if t!=0:                     #if the score is not equal to any scores already in the leaderboard.
          print(scores)
          scores.append(self.score)
          print(scores)
          scores.sort()
          if self.score>scores[0]:
            leaderboards.pop(str(scores[0]))   
-         scores.pop(0)
+         scores.pop(0)                          #deletes the first element of the appended scores list. (lowest score among the leaderboard and the new score)
          scores=[str(i) for i in scores]
        for i in scores:
          if str(self.score)==i:
-           leaderboards[i]=name
+           leaderboards[i]=name                 #the score is stored in the dictionary.
            
        with open('leaderboards.txt', 'w') as f:
         json.dump(leaderboards, f)
