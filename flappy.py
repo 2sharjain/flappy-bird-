@@ -42,6 +42,8 @@ class GameOver: #make the gameover window and displayes the scores.
 
     def setName(self):
         name = self.entry.get()
+        if name=="":
+            return 0
         y = 300
         leaders = self.sortedDict(name)
         scores=list(leaders.keys()) #scores as strings
