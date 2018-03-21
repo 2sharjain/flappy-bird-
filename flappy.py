@@ -180,8 +180,8 @@ def gameStart(game, canvas):
             i.move()
             
         if a % difficulty == 0:
-            z = random.randrange(110, 180)
-            w = random.randrange(200, 450)
+            z = random.randrange(90, 180)
+            w = random.randrange(230, 450)
             rectObjects.append(Rectangle(canvas, 380, w - z, w))  # new Rectangle object stored in the array
             a = 0
         
