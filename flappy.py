@@ -1,4 +1,5 @@
 
+
 from tkinter import *
 import random
 import time
@@ -8,91 +9,91 @@ import json
 '''Class GameOver is the class with methods which make the game over window and the present the high scores'''
 
 class GameOver:
-    def __init__(self,score,canvas): #make the gameover window and displayes the scores.
+    def __init__(self,score,canvas):
         self.score=score
-        self.leaderboards={}   #dictionary containing the high scores.
+        self.leaderboards={}
         print (score)
         canvas.destroy()
-        
         self.canvas1 = Canvas(root, width=400, height=500, bg='WHITE')
     
-        self.canvas1.create_text(200, 200, text='GAME OVER', fill='BLACK',
+        self.canvas1.create_text(200, 100, text='GAME OVER', fill='BLACK',
                         font=('Comic San MS', 50, 'bold'))
     
-        self.canvas1.create_text(200, 250, text='YOUR SCORE IS :'
+        self.canvas1.create_text(200, 150, text='YOUR SCORE IS :'
                               + str(score), fill='BLACK',
-                              font=('Comic San MS', 25,))
+                              font=('Comic San MS', 25, 'bold'))
         self.canvas1.pack()
-        self.entry = Entry(root)
-        self.entry.pack()
-        self.button1 = Button(root, text='ENTER', command=self.displayScores)
-        self.button1.pack()
+        
+        self.entry = Entry(self.canvas1)
+        self.id1=self.canvas1.create_window(200,420,window=(self.entry),height=25,width=80)
+        
+        self.label=Label(self.canvas1,text="ENTER YOUR NAME",bg="WHITE")
+        self.id2=self.canvas1.create_window(80,420,window=(self.label),height=30,width=120)
+        
+        self.button1 = Button(self.canvas1, text='ENTER', command=self.setName)
+        self.id3=self.canvas1.create_window(200,450,window=(self.button1),height=30,width=80)
+        
         self.button2 = Button(root, text='RESTART', command=self.reStart)
-        self.button2.pack()
+        self.id4=self.canvas1.create_window(200,200,window=(self.button2),height=30,width=80)
 
         root.update()
         root.mainloop()
         
 
-    def displayScores(self):
+    def setName(self):
         name = self.entry.get()
         y = 300
-        leaders = self.leaderBoard(name)
-        scores=list(leaders.keys())  #scores as strings
-        scores=[int(i) for i in scores] #scores as integers
-        scores=sorted(scores,reverse=True) #reverse sorting 
+        leaders = self.sortedDict(name)
+        scores=list(leaders.keys())
+        scores=[int(i) for i in scores]
+        scores=sorted(scores,reverse=True)
         for i in scores:
-            self.canvas1.create_text(200, y, text=str(i) + ': '       #displaying scores on the canvas in decreasing order
+            self.canvas1.create_text(200, y, text=str(i) + ': '
                                 + str(leaders[str(i)]), fill='BLACK',
                                 font=('Comic San MS', 20, 'bold'))
             y = y + 50
-        self.button1.pack_forget() #removes the enter button once the leaderboard is displayed.
-        self.entry.pack_forget()   #removes the text field once the leaderboard is displayed.
-        
+        self.canvas1.delete(self.id1)
+        self.canvas1.delete(self.id2)
+        self.canvas1.delete(self.id3)
 
-    def reStart(self):   #restarts the game
+    def reStart(self):
         root.destroy()
         os.system("python flappy.py")
 
         
-    def leaderBoard(self,name):   #stores the scores and the corresponding names as a dictionary in a json file.
-       t=1                        # t represents if the score is equal to any scores the leaderboars. if t==0, score is already in the leaderboard.
+    def sortedDict(self,name):
+       t=1
        try:   
          with open('leaderboards.txt', 'r') as f:
            leaderboards = json.load(f)
        except:
-         leaderboards={"3":"name","2":"name","1":"name"}  #the scores are the keys and the names are the values.
+         leaderboards={"3":"name","2":"name","1":"name"}
        scores=list(leaderboards.keys())
-       scores=[int(i) for i in scores]        #list of scores in type int.
-       
-       for i in scores:                       #checks if the score is already in the current leaderboard.
+       scores=[int(i) for i in scores]
+       for i in scores:
          if self.score==i:
           leaderboards[str(self.score)]=name
           t=0
-          
-       if t!=0:                               #if the score is not equal to any scores.
-         print(scores) 
-         scores.append(self.score)            
+       if t!=0:        
          print(scores)
-         
+         scores.append(self.score)
+         print(scores)
          scores.sort()
-         
          if self.score>scores[0]:
-           leaderboards.pop(str(scores[0]))
-           
-         scores.pop(0)                       #deletes the first element of the appended scores list.
+           leaderboards.pop(str(scores[0]))   
+         scores.pop(0)
          scores=[str(i) for i in scores]
-         
-       for i in scores:                      #if the score is not deleted(it is high enough to be on leaderboard or the scores list)
+       for i in scores:
          if str(self.score)==i:
-           leaderboards[i]=name              #the score is stored in the dictionary.
+           leaderboards[i]=name
            
        with open('leaderboards.txt', 'w') as f:
         json.dump(leaderboards, f)
-        
        print (leaderboards)
-       return leaderboards     
+       return leaderboards
 
+
+    
 '''ball object belongs to the class Ball and it defines the actions and parameters of the ball(bird) which is used in the game'''
 
 class Ball:
@@ -100,7 +101,7 @@ class Ball:
     def __init__(self, canvas): #makes the ball appear on the canvas
         self.willMove = True    #when ball hits the rectangle this parameter will be False
         self.x = 0             #x co-ordinate speed of the ball. will be always zero.
-        self.gravity = 2       #the gravity checks the rate of falling down.  
+        self.gravity = 1.5       #the gravity checks the rate of falling down.  
         self.canvas = canvas
         self.id = self.canvas.create_oval(10, 180, 40, 210, fill='RED') #tkinter id of the oval(ball)
         self.canvas.move(self.id, 30, 0)   #places the ball in the position during the starting of the game.
@@ -209,3 +210,4 @@ ball = Ball(canvas)
 score = gameStart(True, canvas)
 time.sleep(0.25)
 gameOver=GameOver(score,canvas)
+
