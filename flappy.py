@@ -11,6 +11,7 @@ import json
 class GameOver: #make the gameover window and displayes the scores.
     def __init__(self,score,canvas):
         self.score=score
+        self.err=1
         self.leaderboards={} #dictionary containing the high scores.
         print (score)
         canvas.destroy()
@@ -42,8 +43,12 @@ class GameOver: #make the gameover window and displayes the scores.
 
     def setName(self):
         name = self.entry.get()
-        if name=="":
+        if name=="":    #Enter name to acces leaderboards!
+            self.txtid=self.canvas1.create_text(200,380,text="ENTER NAME TO ACCESS LEADERBOARDS!",fill="RED",font=("Comic San MS",10))
+            self.err=0
             return 0
+        if self.err==0:
+            self.canvas1.delete(self.txtid)
         y = 300
         leaders = self.sortedDict(name)
         scores=list(leaders.keys()) #scores as strings
