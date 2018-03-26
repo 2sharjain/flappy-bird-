@@ -224,6 +224,7 @@ def gameStart(game, canvas):   #game variable is False when the game stops.
             canvas.delete(rectObjects[0].id2)
             del rectObjects[0]
             score = score + 1
+            scoreCard.config(text=str(score))
             
         if score>10:
                 difficulty=80
