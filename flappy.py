@@ -196,8 +196,8 @@ def gameStart(game, canvas):   #game variable is False when the game stops.
     score = 0
     rectObjects = []
     difficulty=85
-    scoreCard=label(root,text=str(score))
-    canvas.create_window(300,40,window=scoreCard,width=40,height=40)
+    scoreCard=Label(root,text="0",fg="BLACK",font=("HELVETICA",15))
+    canvas.create_window(350,40,window=scoreCard,width=40,height=40)
     
 
     while game:
