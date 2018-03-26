@@ -79,7 +79,7 @@ class GameOver: #make the gameover window and displayes the scores.
         if self.err==0:
             self.canvas1.delete(self.txtid)
         y = 300
-        leaders = self.sortedDict(name,self.scores)
+        leaders = self.sortedLeaderBoard(name,self.scores)
         scores=list(leaders.keys()) #scores as strings
         scores=[int(i) for i in scores] #scores as integers
         scores=sorted(scores,reverse=True) #reverse sorting
@@ -100,7 +100,7 @@ class GameOver: #make the gameover window and displayes the scores.
         os.system("python flappy.py")
 
         
-    def sortedDict(self,name,scores):  #stores the scores and the corresponding names as a dictionary in a json file.
+    def sortedLeaderBoard(self,name,scores):  #stores the scores and the corresponding names as a dictionary in a json file.
        t=1                     # t represents if the score is equal to any scores in the leaderboars. if t==0, score is already in the leaderboard.
        for i in scores:
          if self.score==i:        #checks if the score is already in the current leaderboard.
