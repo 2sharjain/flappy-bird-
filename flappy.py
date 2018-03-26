@@ -1,4 +1,4 @@
-  #save file as flappy.py
+ #save file as flappy.py
 
 from tkinter import *
 import random
@@ -36,13 +36,12 @@ class GameOver: #make the gameover window and displayes the scores.
         
         if score>scores[0]:  #if score is large enough to be in the leaderboards.
 
-        
+                 
          self.entry = Entry(self.canvas1)
          self.id1=self.canvas1.create_window(200,420,window=(self.entry),height=25,width=80)
         
          self.label=Label(self.canvas1,text="ENTER YOUR NAME",bg="WHITE")
          self.id2=self.canvas1.create_window(80,420,window=(self.label),height=30,width=120)
-        
          self.button1 = Button(self.canvas1, text='ENTER', command=self.setName)
          self.id3=self.canvas1.create_window(200,450,window=(self.button1),height=30,width=80)
 
@@ -50,7 +49,16 @@ class GameOver: #make the gameover window and displayes the scores.
          root.mainloop()
 
         else:
-            
+         leaders = self.sortedLeaderBoard(" ",self.scores)
+         scores=list(leaders.keys()) #scores as strings
+         scores=[int(i) for i in scores] #scores as integers
+         scores=sorted(scores,reverse=True) #reverse sorting
+         y=300
+         for i in scores:                                           #displaying scores on the canvas in decreasing order
+            self.canvas1.create_text(200, y, text=str(i) + ': '
+                                + str(leaders[str(i)]), fill='BLACK',
+                                font=('Comic San MS', 20, 'bold'))
+            y = y + 50         
          self.button2 = Button(root, text='RESTART', command=self.reStart)
          self.id4=self.canvas1.create_window(200,200,window=(self.button2),height=30,width=80)
 
@@ -62,7 +70,7 @@ class GameOver: #make the gameover window and displayes the scores.
         
 
     def setName(self):
-        name = self.entry.get()
+        name=self.entry.get()
         if name=="":    #Enter name to acces leaderboards!
             self.txtid=self.canvas1.create_text(200,380,text="ENTER NAME TO ACCESS LEADERBOARDS!",fill="RED",font=("Comic San MS",10))
             self.err=0
