@@ -1,4 +1,4 @@
-#save file as flappy.py
+  #save file as flappy.py
 
 from tkinter import *
 import random
@@ -11,7 +11,7 @@ import json
 class GameOver: #make the gameover window and displayes the scores.
     def __init__(self,score,canvas):
         self.score=score
-        self.err=1
+        self.err=1   #name error(if no name is entered it will be zero)
         self.leaderboards={} #dictionary containing the high scores.
         print (score)
         try:   
@@ -22,19 +22,20 @@ class GameOver: #make the gameover window and displayes the scores.
         scores=list(self.leaderboards.keys())
         self.scores=scores=[int(i) for i in scores]
         self.scores.sort()
-        
-        if score>scores[0]:
             
-         canvas.destroy()
-         self.canvas1 = Canvas(root, width=400, height=500, bg='WHITE')
+        canvas.destroy()
+        self.canvas1 = Canvas(root, width=400, height=500, bg='WHITE')
     
-         self.canvas1.create_text(200, 100, text='GAME OVER', fill='BLACK',
+        self.canvas1.create_text(200, 100, text='GAME OVER', fill='BLACK',
                         font=('Comic San MS', 50, 'bold'))
     
-         self.canvas1.create_text(200, 150, text='YOUR SCORE IS :'
+        self.canvas1.create_text(200, 150, text='YOUR SCORE IS :'
                               + str(score), fill='BLACK',
                               font=('Comic San MS', 25, 'bold'))
-         self.canvas1.pack()
+        self.canvas1.pack()
+        
+        if score>scores[0]:  #if score is large enough to be in the leaderboards.
+
         
          self.entry = Entry(self.canvas1)
          self.id1=self.canvas1.create_window(200,420,window=(self.entry),height=25,width=80)
@@ -49,17 +50,7 @@ class GameOver: #make the gameover window and displayes the scores.
          root.mainloop()
 
         else:
-         canvas.destroy()
-         self.canvas1 = Canvas(root, width=400, height=500, bg='WHITE')
-    
-         self.canvas1.create_text(200, 100, text='GAME OVER', fill='BLACK',
-                        font=('Comic San MS', 50, 'bold'))
-    
-         self.canvas1.create_text(200, 150, text='YOUR SCORE IS :'
-                              + str(score), fill='BLACK',
-                              font=('Comic San MS', 25, 'bold'))
-         self.canvas1.pack()
-        
+            
          self.button2 = Button(root, text='RESTART', command=self.reStart)
          self.id4=self.canvas1.create_window(200,200,window=(self.button2),height=30,width=80)
 
@@ -191,10 +182,10 @@ class Rectangle:
                 ball.willMove = False
                 return True
 
-def gameStart(game, canvas):
+def gameStart(game, canvas):   #game variable is False when the game stops. 
 
     a = 0
-    l = 0
+    score = 0
     rectObjects = []
     difficulty=85
 
@@ -221,16 +212,17 @@ def gameStart(game, canvas):
             canvas.delete(rectObjects[0].id1)
             canvas.delete(rectObjects[0].id2)
             del rectObjects[0]
-            l = l + 1
-            if l>10:
+            score = score + 1
+            
+        if score>10:
                 difficulty=80
-            if l>20:
-                difficulty=75
+        if score>20:
+                difficulty=70
                 
         root.update()
         a = a + 1
         time.sleep(0.01)
-    return l  # returns the score i.e the number of deleted rectangles
+    return score  # returns the score i.e the number of deleted rectangles
 
 
 root = Tk()
@@ -241,5 +233,4 @@ canvas.pack()
 ball = Ball(canvas)
 score = gameStart(True, canvas)
 time.sleep(0.25)
-gameOver=GameOver(33,canvas)
-
+gameOver=GameOver(score,canvas)
