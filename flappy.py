@@ -34,7 +34,7 @@ class GameOver: #make the gameover window and displayes the scores.
                               font=('Comic San MS', 25, 'bold'))
         self.canvas1.pack()
         
-        if score>scores[0]:  #if score is large enough to be in the leaderboards.
+        if score>=scores[0]:  #if score is large enough to be in the leaderboards.
 
                  
          self.entry = Entry(self.canvas1)
