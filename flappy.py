@@ -1,4 +1,4 @@
-#save the file as flappy.py
+#save file as flappy.py
 
 from tkinter import *
 import random
@@ -14,31 +14,60 @@ class GameOver: #make the gameover window and displayes the scores.
         self.err=1
         self.leaderboards={} #dictionary containing the high scores.
         print (score)
-        canvas.destroy()
-        self.canvas1 = Canvas(root, width=400, height=500, bg='WHITE')
+        try:   
+         with open('leaderboards.txt', 'r') as f:
+           self.leaderboards = json.load(f)
+        except:
+         self.leaderboards={"3":"name","2":"name","1":"name"} #the scores are the keys and the names are the values.
+        scores=list(self.leaderboards.keys())
+        self.scores=scores=[int(i) for i in scores]
+        self.scores.sort()
+        
+        if score>scores[0]:
+            
+         canvas.destroy()
+         self.canvas1 = Canvas(root, width=400, height=500, bg='WHITE')
     
-        self.canvas1.create_text(200, 100, text='GAME OVER', fill='BLACK',
+         self.canvas1.create_text(200, 100, text='GAME OVER', fill='BLACK',
                         font=('Comic San MS', 50, 'bold'))
     
-        self.canvas1.create_text(200, 150, text='YOUR SCORE IS :'
+         self.canvas1.create_text(200, 150, text='YOUR SCORE IS :'
                               + str(score), fill='BLACK',
                               font=('Comic San MS', 25, 'bold'))
-        self.canvas1.pack()
+         self.canvas1.pack()
         
-        self.entry = Entry(self.canvas1)
-        self.id1=self.canvas1.create_window(200,420,window=(self.entry),height=25,width=80)
+         self.entry = Entry(self.canvas1)
+         self.id1=self.canvas1.create_window(200,420,window=(self.entry),height=25,width=80)
         
-        self.label=Label(self.canvas1,text="ENTER YOUR NAME",bg="WHITE")
-        self.id2=self.canvas1.create_window(80,420,window=(self.label),height=30,width=120)
+         self.label=Label(self.canvas1,text="ENTER YOUR NAME",bg="WHITE")
+         self.id2=self.canvas1.create_window(80,420,window=(self.label),height=30,width=120)
         
-        self.button1 = Button(self.canvas1, text='ENTER', command=self.setName)
-        self.id3=self.canvas1.create_window(200,450,window=(self.button1),height=30,width=80)
-        
-        self.button2 = Button(root, text='RESTART', command=self.reStart)
-        self.id4=self.canvas1.create_window(200,200,window=(self.button2),height=30,width=80)
+         self.button1 = Button(self.canvas1, text='ENTER', command=self.setName)
+         self.id3=self.canvas1.create_window(200,450,window=(self.button1),height=30,width=80)
 
-        root.update()
-        root.mainloop()
+         root.update()
+         root.mainloop()
+
+        else:
+         canvas.destroy()
+         self.canvas1 = Canvas(root, width=400, height=500, bg='WHITE')
+    
+         self.canvas1.create_text(200, 100, text='GAME OVER', fill='BLACK',
+                        font=('Comic San MS', 50, 'bold'))
+    
+         self.canvas1.create_text(200, 150, text='YOUR SCORE IS :'
+                              + str(score), fill='BLACK',
+                              font=('Comic San MS', 25, 'bold'))
+         self.canvas1.pack()
+        
+         self.button2 = Button(root, text='RESTART', command=self.reStart)
+         self.id4=self.canvas1.create_window(200,200,window=(self.button2),height=30,width=80)
+
+         root.update()
+         root.mainloop()         
+
+
+         
         
 
     def setName(self):
@@ -50,7 +79,7 @@ class GameOver: #make the gameover window and displayes the scores.
         if self.err==0:
             self.canvas1.delete(self.txtid)
         y = 300
-        leaders = self.sortedDict(name)
+        leaders = self.sortedDict(name,self.scores)
         scores=list(leaders.keys()) #scores as strings
         scores=[int(i) for i in scores] #scores as integers
         scores=sorted(scores,reverse=True) #reverse sorting
@@ -59,6 +88,9 @@ class GameOver: #make the gameover window and displayes the scores.
                                 + str(leaders[str(i)]), fill='BLACK',
                                 font=('Comic San MS', 20, 'bold'))
             y = y + 50
+            
+        self.button2 = Button(root, text='RESTART', command=self.reStart)
+        self.id4=self.canvas1.create_window(200,200,window=(self.button2),height=30,width=80)            
         self.canvas1.delete(self.id1)
         self.canvas1.delete(self.id2)
         self.canvas1.delete(self.id3)
@@ -68,18 +100,11 @@ class GameOver: #make the gameover window and displayes the scores.
         os.system("python flappy.py")
 
         
-    def sortedDict(self,name):  #stores the scores and the corresponding names as a dictionary in a json file.
-       t=1                     # t represents if the score is equal to any scores the leaderboars. if t==0, score is already in the leaderboard.
-       try:   
-         with open('leaderboards.txt', 'r') as f:
-           leaderboards = json.load(f)
-       except:
-         leaderboards={"3":"name","2":"name","1":"name"} #the scores are the keys and the names are the values.
-       scores=list(leaderboards.keys())
-       scores=[int(i) for i in scores]  #list of scores in type int.
+    def sortedDict(self,name,scores):  #stores the scores and the corresponding names as a dictionary in a json file.
+       t=1                     # t represents if the score is equal to any scores in the leaderboars. if t==0, score is already in the leaderboard.
        for i in scores:
          if self.score==i:        #checks if the score is already in the current leaderboard.
-          leaderboards[str(self.score)]=name
+          self.leaderboards[str(self.score)]=name
           t=0
        if t!=0:                     #if the score is not equal to any scores already in the leaderboard.
          print(scores)
@@ -87,17 +112,17 @@ class GameOver: #make the gameover window and displayes the scores.
          print(scores)
          scores.sort()
          if self.score>scores[0]:
-           leaderboards.pop(str(scores[0]))   
+           self.leaderboards.pop(str(scores[0]))   
          scores.pop(0)                          #deletes the first element of the appended scores list. (lowest score among the leaderboard and the new score)
          scores=[str(i) for i in scores]
        for i in scores:
          if str(self.score)==i:
-           leaderboards[i]=name                 #the score is stored in the dictionary.
+           self.leaderboards[i]=name                 #the score is stored in the dictionary.
            
        with open('leaderboards.txt', 'w') as f:
-        json.dump(leaderboards, f)
-       print (leaderboards)
-       return leaderboards
+        json.dump(self.leaderboards, f)
+       print (self.leaderboards)
+       return self.leaderboards
 
 
     
@@ -180,7 +205,7 @@ def gameStart(game, canvas):
             i.move()
             
         if a % difficulty == 0:
-            z = random.randrange(90, 180)
+            z = random.randrange(90, 200)
             w = random.randrange(230, 450)
             rectObjects.append(Rectangle(canvas, 380, w - z, w))  # new Rectangle object stored in the array
             a = 0
@@ -216,5 +241,5 @@ canvas.pack()
 ball = Ball(canvas)
 score = gameStart(True, canvas)
 time.sleep(0.25)
-gameOver=GameOver(score,canvas)
+gameOver=GameOver(33,canvas)
 
