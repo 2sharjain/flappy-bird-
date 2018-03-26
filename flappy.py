@@ -169,8 +169,7 @@ class Rectangle:
         self.y = y
         self.z = z
         self.canvas = canvas
-
-       self.id1 = self.canvas.create_rectangle(self.x, 0, self.x + 60,  #the rectangle object consists of two rectangles created in the same x 
+        self.id1 = self.canvas.create_rectangle(self.x, 0, self.x + 60,  #the rectangle object consists of two rectangles created in the same x 
                 self.z, fill='WHITE')                                    # with the y coord of upper as z the y coord of the lower rect as y
         self.id2 = self.canvas.create_rectangle(self.x, self.y, self.x   #breadth of the rectangle is 60
                 + 60, 500, fill='WHITE')
@@ -197,8 +196,9 @@ def gameStart(game, canvas):   #game variable is False when the game stops.
     score = 0
     rectObjects = []
     difficulty=85
-    scorecard=Label(root,text="0",fg="BLACK",font=("HELVETICA",15))
-    canvas.create_window(350,40,window=scorecard,width=40,height=40)    
+    scoreCard=label(root,text=str(score))
+    canvas.create_window(300,40,window=scoreCard,width=40,height=40)
+    
 
     while game:
         ball.goDown()
@@ -224,7 +224,6 @@ def gameStart(game, canvas):   #game variable is False when the game stops.
             canvas.delete(rectObjects[0].id2)
             del rectObjects[0]
             score = score + 1
-            scorecard.config(text=str(l))
             
         if score>10:
                 difficulty=80
