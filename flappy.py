@@ -171,7 +171,7 @@ class Rectangle:
         self.z = z
         self.canvas = canvas
         self.id1 = self.canvas.create_rectangle(self.x, 0, self.x + 60,  #the rectangle object consists of two rectangles created in the same x 
-                self.z, fill='WHITE')                                    # with the space between them equal to z and the y coord of the lower rect as y
+                self.z, fill='WHITE')                                    # with the y coord of upper as z the y coord of the lower rect as y
         self.id2 = self.canvas.create_rectangle(self.x, self.y, self.x   #breadth of the rectangle is 60
                 + 60, 500, fill='WHITE')
 
