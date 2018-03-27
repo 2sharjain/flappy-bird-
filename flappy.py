@@ -58,7 +58,7 @@ class GameOver: #make the gameover window and displayes the scores.
                                 + str(leaders[str(i)]), fill='BLACK',
                                 font=('Comic San MS', 20, 'bold'))
             y = y + 50         
-         self.button2 = Button(root, text='RESTART', command=self.reStart)
+         self.button2 = Button(self.canvas1, text='RESTART', command=self.reStart)
          self.id4=self.canvas1.create_window(200,200,window=(self.button2),height=30,width=80)
 
          root.update()
@@ -87,7 +87,7 @@ class GameOver: #make the gameover window and displayes the scores.
                                 font=('Comic San MS', 20, 'bold'))
             y = y + 50
             
-        self.button2 = Button(root, text='RESTART', command=self.reStart)
+        self.button2 = Button(self.canvas1, text='RESTART', command=self.reStart)
         self.id4=self.canvas1.create_window(200,200,window=(self.button2),height=30,width=80)            
         self.canvas1.delete(self.id1)
         self.canvas1.delete(self.id2)
