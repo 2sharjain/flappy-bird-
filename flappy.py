@@ -3,14 +3,13 @@
 from tkinter import *
 import random
 import time
-import os
 import json
-
 '''Class GameOver is the class with methods which make the game over window and the present the high scores'''
 
 class GameOver: #make the gameover window and displayes the scores.
-    def __init__(self,score,canvas):
+    def __init__(self,score,canvas,root):
         self.score=score
+        self.root=root
         self.err=1   #name error(if no name is entered it will be zero)
         self.leaderboards={} #dictionary containing the high scores.
         print (score)
@@ -95,8 +94,8 @@ class GameOver: #make the gameover window and displayes the scores.
         self.canvas1.delete(self.id3)
 
     def reStart(self):
-        root.destroy()
-        os.system("python flappy.py")
+        self.root.destroy()
+        start()
 
         
     def sortedLeaderBoard(self,name,scores):  #stores the scores and the corresponding names as a dictionary in a json file.
@@ -134,6 +133,7 @@ class Ball:
         self.x = 0             #x co-ordinate speed of the ball. will be always zero.
         self.gravity = 1.5       #the gravity checks the rate of falling down.  
         self.canvas = canvas
+        
         self.id = self.canvas.create_oval(10, 180, 40, 210, fill='RED') #tkinter id of the oval(ball)
         self.canvas.move(self.id, 30, 0)   #places the ball in the position during the starting of the game.
 
@@ -178,11 +178,11 @@ class Rectangle:
         self.canvas.move(self.id1, -2.2, 0)
         self.canvas.move(self.id2, -2.2, 0)
 
-    def isHit(self):
+    def isHit(self,ball):
         p = []
         coords1 = self.canvas.coords(self.id1)  #coordinates of rectangle(upper)
         coords2 = self.canvas.coords(self.id2)  #coordinates of rectangle(lower)
-        p = canvas.coords(ball.id)  #co-ordinates of the ball
+        p = self.canvas.coords(ball.id)  #co-ordinates of the ball
 
         if p[0] - coords1[0] <= 60 and p[0] - coords1[0] >= -60 and p[2] >= coords1[0]:  # if the ball hits the rectangles.     
 
@@ -190,16 +190,15 @@ class Rectangle:
                 ball.willMove = False
                 return True
 
-def gameStart(game, canvas):   #game variable is False when the game stops. 
+def gameStart(root,game, canvas,ball):   #game variable is False when the game stops. 
 
     a = 0
     score = 0
     rectObjects = []
     difficulty=85
-    scoreCard=Label(root,text="0",fg="BLACK",font=("HELVETICA",15))
-    canvas.create_window(350,40,window=scoreCard,width=40,height=40)
+    label=Label(root,text="0",fg="BLACK",font=("HELVETICA",15))
+    canvas.create_window(350,40,window=label,width=40,height=40)
     
-
     while game:
         ball.goDown()
         
@@ -207,16 +206,16 @@ def gameStart(game, canvas):   #game variable is False when the game stops.
             i.move()
             
         if a % difficulty == 0:
-            z = random.randrange(90, 200)
+            z = random.randrange(120, 200)
             w = random.randrange(230, 450)
-            rectObjects.append(Rectangle(canvas, 380, w - z, w))  # new Rectangle object stored in the array
+            rectObjects.append(Rectangle(canvas, 380, w - z, w,))  # new Rectangle object stored in the array
             a = 0
         
-        if rectObjects[0].isHit():
+        if rectObjects[0].isHit(ball):
                 game = False
                 for i in rectObjects:
                     del i
-                    
+                  
         canvas.bind('<Button-1>', ball.bounce)
         
         if rectObjects[0].canvas.coords(rectObjects[0].id1)[2] < 0:
@@ -224,25 +223,27 @@ def gameStart(game, canvas):   #game variable is False when the game stops.
             canvas.delete(rectObjects[0].id2)
             del rectObjects[0]
             score = score + 1
-            scoreCard.config(text=str(score))
+            label.config(text=str(score))
             
         if score>10:
                 difficulty=80
         if score>20:
-                difficulty=70
+                difficulty=75
                 
         root.update()
         a = a + 1
         time.sleep(0.01)
     return score  # returns the score i.e the number of deleted rectangles
 
+def start():
+ root = Tk()
+ root.title('ALPHA')
+ root.resizable(0, 0)
+ canvas = Canvas(root, width=400, height=500, bg='ORANGE')
+ canvas.pack()
+ ball = Ball(canvas)
+ score = gameStart(root,True, canvas,ball)
+ time.sleep(0.25)
+ gameOver=GameOver(score,canvas,root)
 
-root = Tk()
-root.title('ALPHA')
-root.resizable(0, 0)
-canvas = Canvas(root, width=400, height=500, bg='ORANGE')
-canvas.pack()
-ball = Ball(canvas)
-score = gameStart(True, canvas)
-time.sleep(0.25)
-gameOver=GameOver(score,canvas)
+start()
