@@ -247,3 +247,5 @@ def start():
  gameOver=GameOver(score,canvas,root)
 
 start()
+
+# adding more comments because why not
