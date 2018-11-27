@@ -1,251 +1,265 @@
- #save file as flappy.py
-
 from tkinter import *
 import random
 import time
-import json
-'''Class GameOver is the class with methods which make the game over window and the present the high scores'''
+import pickle
 
-class GameOver: #make the gameover window and displayes the scores.
-    def __init__(self,score,canvas,root):
-        self.score=score
-        self.root=root
-        self.err=1   #name error(if no name is entered it will be zero)
-        self.leaderboards={} #dictionary containing the high scores.
-        print (score)
-        try:   
-         with open('leaderboards.txt', 'r') as f:
-           self.leaderboards = json.load(f)
-        except:
-         self.leaderboards={"3":"name","2":"name","1":"name"} #the scores are the keys and the names are the values.
-        scores=list(self.leaderboards.keys())
-        self.scores=scores=[int(i) for i in scores]
-        self.scores.sort()
-            
-        canvas.destroy()
-        self.canvas1 = Canvas(root, width=400, height=500, bg='WHITE')
-    
-        self.canvas1.create_text(200, 100, text='GAME OVER', fill='BLACK',
-                        font=('Comic San MS', 50, 'bold'))
-    
-        self.canvas1.create_text(200, 150, text='YOUR SCORE IS :'
-                              + str(score), fill='BLACK',
-                              font=('Comic San MS', 25, 'bold'))
-        self.canvas1.pack()
-        
-        if score>=scores[0]:  #if score is large enough to be in the leaderboards.
 
-                 
-         self.entry = Entry(self.canvas1)
-         self.id1=self.canvas1.create_window(200,420,window=(self.entry),height=25,width=80)
-        
-         self.label=Label(self.canvas1,text="ENTER YOUR NAME",bg="WHITE")
-         self.id2=self.canvas1.create_window(80,420,window=(self.label),height=30,width=120)
-         self.button1 = Button(self.canvas1, text='ENTER', command=self.setName)
-         self.id3=self.canvas1.create_window(200,450,window=(self.button1),height=30,width=80)
+class Score:
+    def __init__(self, name: str, score: int):
+        self.name = name
+        self.score = score
 
-         root.update()
-         root.mainloop()
-
+    def __lt__(self, other):
+        if isinstance(other, Score):
+            return self.score < other.score
         else:
-         leaders = self.sortedLeaderBoard(" ",self.scores)
-         scores=list(leaders.keys()) #scores as strings
-         scores=[int(i) for i in scores] #scores as integers
-         scores=sorted(scores,reverse=True) #reverse sorting
-         y=300
-         for i in scores:                                           #displaying scores on the canvas in decreasing order
-            self.canvas1.create_text(200, y, text=str(i) + ': '
-                                + str(leaders[str(i)]), fill='BLACK',
-                                font=('Comic San MS', 20, 'bold'))
-            y = y + 50         
-         self.button2 = Button(self.canvas1, text='RESTART', command=self.reStart)
-         self.id4=self.canvas1.create_window(200,200,window=(self.button2),height=30,width=80)
+            raise TypeError
 
-         root.update()
-         root.mainloop()         
-
-
-         
-        
-
-    def setName(self):
-        name=self.entry.get()
-        if name=="":    #Enter name to acces leaderboards!
-            self.txtid=self.canvas1.create_text(200,380,text="ENTER NAME TO ACCESS LEADERBOARDS!",fill="RED",font=("Comic San MS",10))
-            self.err=0
-            return 0
-        if self.err==0:
-            self.canvas1.delete(self.txtid)
-        y = 300
-        leaders = self.sortedLeaderBoard(name,self.scores)
-        scores=list(leaders.keys()) #scores as strings
-        scores=[int(i) for i in scores] #scores as integers
-        scores=sorted(scores,reverse=True) #reverse sorting
-        for i in scores:                                           #displaying scores on the canvas in decreasing order
-            self.canvas1.create_text(200, y, text=str(i) + ': '
-                                + str(leaders[str(i)]), fill='BLACK',
-                                font=('Comic San MS', 20, 'bold'))
-            y = y + 50
-            
-        self.button2 = Button(self.canvas1, text='RESTART', command=self.reStart)
-        self.id4=self.canvas1.create_window(200,200,window=(self.button2),height=30,width=80)            
-        self.canvas1.delete(self.id1)
-        self.canvas1.delete(self.id2)
-        self.canvas1.delete(self.id3)
-
-    def reStart(self):
-        self.root.destroy()
-        start()
-
-        
-    def sortedLeaderBoard(self,name,scores):  #stores the scores and the corresponding names as a dictionary in a json file.
-       t=1                     # t represents if the score is equal to any scores in the leaderboars. if t==0, score is already in the leaderboard.
-       for i in scores:
-         if self.score==i:        #checks if the score is already in the current leaderboard.
-          self.leaderboards[str(self.score)]=name
-          t=0
-       if t!=0:                     #if the score is not equal to any scores already in the leaderboard.
-         print(scores)
-         scores.append(self.score)
-         print(scores)
-         scores.sort()
-         if self.score>scores[0]:
-           self.leaderboards.pop(str(scores[0]))   
-         scores.pop(0)                          #deletes the first element of the appended scores list. (lowest score among the leaderboard and the new score)
-         scores=[str(i) for i in scores]
-       for i in scores:
-         if str(self.score)==i:
-           self.leaderboards[i]=name                 #the score is stored in the dictionary.
-           
-       with open('leaderboards.txt', 'w') as f:
-        json.dump(self.leaderboards, f)
-       print (self.leaderboards)
-       return self.leaderboards
-
-
-    
-'''ball object belongs to the class Ball and it defines the actions and parameters of the ball(bird) which is used in the game'''
 
 class Ball:
-
-    def __init__(self, canvas): #makes the ball appear on the canvas
-        self.willMove = True    #when ball hits the rectangle this parameter will be False
-        self.x = 0             #x co-ordinate speed of the ball. will be always zero.
-        self.gravity = 1.5       #the gravity checks the rate of falling down.  
+    def __init__(self, canvas):
+        self.move = True
+        self.gravity = 1.5
         self.canvas = canvas
-        
-        self.id = self.canvas.create_oval(10, 180, 40, 210, fill='RED') #tkinter id of the oval(ball)
-        self.canvas.move(self.id, 30, 0)   #places the ball in the position during the starting of the game.
+        self.id = self.canvas.create_oval(10, 180, 40, 210, fill='RED')
 
-    def goDown(self):     #ball falls down. it is called in the while loop in the function gameStart
+        # initial coordinates
+        self.canvas.move(self.id, 30, 0)
 
-        coords = self.canvas.coords(self.id) #the current co-ordinates of the ball.returns a tuple
-        
-        if self.willMove == True:
-            self.canvas.move(self.id, self.x, self.gravity)
-            coords = self.canvas.coords(self.id)
+    def fall(self):
+        coords = self.get_position
+        if self.move == True:
+            self.canvas.move(self.id, 0, self.gravity)
+            coords = self.get_position
 
-        if coords[3] > 500:   #if it hits the bottom of screen
+        if coords[3] > 500:
             self.gravity = 0
-            self.willMove = False
+            self.move = False
 
-    def bounce(self, event): #bounces as the mouse button is clicked
-        if self.willMove == True:
+    def bounce(self, event):
+        if self.move == True:
             self.canvas.move(self.id, 0, -40)
 
+    @property
+    def get_position(self):
+        return self.canvas.coords(self.id)
 
-''' class of rectangle objects created in the game through which the ball bounces'''            
 
-class Rectangle:   
-
-    def __init__(
-        self,
-        canvas,
-        x,
-        z,
-        y,
-        ):
-        self.x = x
-        self.y = y
-        self.z = z
+class Pipe:
+    def __init__(self, canvas):
         self.canvas = canvas
-        self.id1 = self.canvas.create_rectangle(self.x, 0, self.x + 60,  #the rectangle object consists of two rectangles created in the same x 
-                self.z, fill='WHITE')                                    # with the y coord of upper as z the y coord of the lower rect as y
-        self.id2 = self.canvas.create_rectangle(self.x, self.y, self.x   #breadth of the rectangle is 60
-                + 60, 500, fill='WHITE')
+        self.init_components()
+
+    def init_components(self):
+        starting_point = 400
+        height_upper = random.randrange(120, 200)
+        height_lower = random.randrange(230, 450)
+
+        self.upper = self.canvas.create_rectangle(starting_point, 0, starting_point+60,
+                                                  height_upper, fill='White')
+        self.lower = self.canvas.create_rectangle(starting_point, height_lower, starting_point+60,
+                                                  500, fill='White')
 
     def move(self):
-        self.canvas.move(self.id1, -2.2, 0)
-        self.canvas.move(self.id2, -2.2, 0)
 
-    def isHit(self,ball):
-        p = []
-        coords1 = self.canvas.coords(self.id1)  #coordinates of rectangle(upper)
-        coords2 = self.canvas.coords(self.id2)  #coordinates of rectangle(lower)
-        p = self.canvas.coords(ball.id)  #co-ordinates of the ball
+        self.canvas.move(self.upper, -2.2, 0)
+        self.canvas.move(self.lower, -2.2, 0)
 
-        if p[0] - coords1[0] <= 60 and p[0] - coords1[0] >= -60 and p[2] >= coords1[0]:  # if the ball hits the rectangles.     
+    def hits(self, ball):
+        coords_upper = self.canvas.coords(self.upper)
+        coords_lower = self.canvas.coords(self.lower)
+        coords = ball.get_position
 
-            if p[1] + 30 >= coords2[1] or p[1] <= coords1[3]: 
-                ball.willMove = False
+        if coords[0] - coords_upper[0] <= 60 and coords[0] - coords_upper[0] >= -60 and coords[2] >= coords_upper[0]:
+            if coords[1] + 30 >= coords_lower[1] or coords[1] <= coords_upper[3]:
+                ball.move = False
                 return True
 
-def gameStart(root,game, canvas,ball):   #game variable is False when the game stops. 
+    def dispose(self):
+        self.canvas.delete(self.upper)
+        self.canvas.delete(self.lower)
 
-    a = 0
-    score = 0
-    rectObjects = []
-    difficulty=85
-    label=Label(root,text="0",fg="BLACK",font=("HELVETICA",15))
-    canvas.create_window(350,40,window=label,width=40,height=40)
-    
-    while game:
-        ball.goDown()
-        
-        for i in rectObjects:
-            i.move()
-            
-        if a % difficulty == 0:
-            z = random.randrange(120, 200)
-            w = random.randrange(230, 450)
-            rectObjects.append(Rectangle(canvas, 380, w - z, w,))  # new Rectangle object stored in the array
-            a = 0
-        
-        if rectObjects[0].isHit(ball):
-                game = False
-                for i in rectObjects:
-                    del i
-                  
-        canvas.bind('<Button-1>', ball.bounce)
-        
-        if rectObjects[0].canvas.coords(rectObjects[0].id1)[2] < 0:
-            canvas.delete(rectObjects[0].id1)
-            canvas.delete(rectObjects[0].id2)
-            del rectObjects[0]
-            score = score + 1
-            label.config(text=str(score))
-            
-        if score>10:
-                difficulty=80
-        if score>20:
-                difficulty=75
-                
-        root.update()
-        a = a + 1
-        time.sleep(0.01)
-    return score  # returns the score i.e the number of deleted rectangles
 
-def start():
- root = Tk()
- root.title('ALPHA')
- root.resizable(0, 0)
- canvas = Canvas(root, width=400, height=500, bg='ORANGE')
- canvas.pack()
- ball = Ball(canvas)
- score = gameStart(root,True, canvas,ball)
- time.sleep(0.25)
- gameOver=GameOver(score,canvas,root)
+class Game(Tk):
+    def __init__(self):
+        super().__init__()
 
-start()
+        self.game = True
+        self.title("Flappy Bird")
+        self.resizable(0, 0)
 
-# adding more comments because why not
+        self.init_components()
+
+    def init_components(self):
+        self.canvas = Canvas(self, width=400, height=500, bg="orange")
+        self.ball = Ball(self.canvas)
+
+        self.canvas.pack()
+
+    def start_game(self):
+        score = 0
+        frame_count = 0
+        pipes = [Pipe(self.canvas)]
+        difficulty = 85
+
+        score_label = Label(self, text="0", fg="BLACK", font=("HELVETICA", 15))
+        self.canvas.create_window(
+            350, 40, window=score_label, width=40, height=40)
+        self.canvas.bind('<Button-1>', self.ball.bounce)
+
+        while self.game:
+            self.ball.fall()
+            for pipe in pipes:
+                pipe.move()
+
+            if pipes[0].hits(self.ball):
+                self.game = False
+                del pipes
+                self.destroy()
+
+                return score
+
+            elif self.canvas.coords(pipes[0].upper)[0] + 60 < 0:
+                score += 1
+                score_label.config(text=str(score))
+                pipes[0].dispose()
+                pipes.pop(0)
+
+            if frame_count % difficulty == 0 and frame_count:
+                pipes.append(Pipe(self.canvas))
+                frame_count = 0
+
+            if score > 10:
+                difficulty = 80
+            elif score > 20:
+                difficulty = 75
+
+            frame_count += 1
+            time.sleep(0.01)
+
+            self.update()
+            self.update_idletasks()
+
+
+class GameOver(Tk):
+    def __init__(self, score):
+        super().__init__()
+
+        self.resizable(0, 0)
+        self.title("Game Over!")
+
+        self.score = score
+        self.init_components()
+        self.mainloop()
+
+    def init_components(self):
+        self.canvas = Canvas(self, height=500, width=400)
+        self.canvas.pack()
+
+        self.canvas.create_text(200, 100, text='GAME OVER', fill='BLACK',
+                                font=('Comic San MS', 50, 'bold'))
+        self.canvas.create_text(200, 150, text='YOUR SCORE IS :'
+                                + str(self.score), fill='BLACK',
+                                font=('Comic San MS', 25, 'bold'))
+
+        if self.check_leaderboard_eligibility(self.score):
+            self.__get_name()
+
+        else:
+            self.__show_leaderboard()
+
+    def __show_leaderboard(self):
+        leaderboard = self.get_leaderboard()
+        leaderboard = sorted(leaderboard, reverse=True)
+
+        y = 300     # y coord of score text
+        for score in leaderboard:
+            self.canvas.create_text(200, y, text=score.name + ': '
+                                    + str(score.score), fill='BLACK',
+                                    font=('Comic San MS', 20, 'bold'))
+            y = y + 50
+
+        # restart button
+        self.restart_button = Button(
+            self.canvas, text='RESTART', command=self.restart)
+        self.canvas.create_window(200, 200, window=(
+            self.restart_button), height=30, width=80)
+
+    @staticmethod
+    def get_leaderboard():
+        try:
+            with open("leaderboards.txt", "rb") as f:
+                scores = pickle.load(f)
+        except FileNotFoundError:
+            scores = [Score("name_1", 1), Score(
+                "name_2", 2), Score("name_3", 3)]
+
+            with open("leaderboards.txt", "wb") as f:
+                pickle.dump(scores, f)
+
+        return scores
+
+    def __update_leaderboard(self):
+        name = self.name.get()
+        score = self.score
+        new_score = Score(name, score)
+
+        leaderboard = self.get_leaderboard()
+        leaderboard.append(new_score)
+        leaderboard = sorted(leaderboard, reverse=True)
+
+        with open("leaderboards.txt", "wb") as f:
+            pickle.dump(leaderboard[:3], f)
+
+        for widget in self.name_entry_widgets:
+            self.canvas.delete(widget)
+
+        self.__show_leaderboard()
+
+    @classmethod
+    def check_leaderboard_eligibility(cls, current_score):
+        scores = cls.get_leaderboard()
+        for score in scores:
+            if(score.score <= current_score):
+                return True
+        return False
+
+    def restart(self):
+        self.destroy()
+        main()
+
+    def __get_name(self):
+        self.name_entry_widgets = []
+
+        # name text field
+        self.name = Entry(self.canvas)
+        self.window_for_name = self.canvas.create_window(
+            200, 420, window=(self.name), height=25, width=80)
+
+        self.name_entry_widgets.append(self.window_for_name)
+
+        # label for the text field
+        self.for_name_entry = Label(
+            self.canvas, text="ENTER YOUR NAME", bg="WHITE")
+        self.window_for_name_label = self.canvas.create_window(
+            80, 420, window=(self.for_name_entry), height=30, width=120)
+
+        self.name_entry_widgets.append(self.window_for_name_label)
+
+        # submit button
+        self.submit = Button(self.canvas, text='ENTER',
+                             command=self.__update_leaderboard)
+        self.window_for_submit = self.canvas.create_window(
+            200, 450, window=(self.submit), height=30, width=80)
+
+        self.name_entry_widgets.append(self.window_for_submit)
+
+
+def main():
+    new_game = Game()
+    score = new_game.start_game()
+    end_game = GameOver(score)
+
+
+if __name__ == '__main__':
+    main()
