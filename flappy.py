@@ -78,7 +78,9 @@ class Pipe:
     def dispose(self):
         self.canvas.delete(self.upper)
         self.canvas.delete(self.lower)
-
+    
+    def __del__(self):
+        self.dispose()
 
 class Game(Tk):
     def __init__(self):
@@ -122,7 +124,6 @@ class Game(Tk):
             elif self.canvas.coords(pipes[0].upper)[0] + 60 < 0:
                 score += 1
                 score_label.config(text=str(score))
-                pipes[0].dispose()
                 pipes.pop(0)
 
             if frame_count % difficulty == 0 and frame_count:
